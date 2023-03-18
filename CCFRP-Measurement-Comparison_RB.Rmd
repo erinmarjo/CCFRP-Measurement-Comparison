@@ -1,0 +1,229 @@
+---
+title: "CCFRP Central California Fork Length and Total Length Comparison"
+author: "Rachel Brooks"
+date: "2023-03-17"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, error=FALSE)
+
+rm(list = ls());graphics.off()
+library(tidyverse) # For data manipulation and summarization
+library(plotrix) #To use standard error calculation
+library(cowplot) #For grouping plots
+library(scales) #For editing axis scales
+library(rstatix) #For running ANCOVA
+library(ggpmisc) #adding equation and r2 to figures
+
+alpha=0.5
+formula<-y~x
+theme_set(theme_classic(base_size=16))
+
+```
+
+Load Data
+
+```{r}
+
+length.data <-read.csv('Fork-And-Total-Length-Data.csv')
+
+```
+Blue/Deacon Rockfish
+
+```{r}
+
+blue.deacon<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Blue/Deacon Rockfish")
+
+ggplot(blue.deacon, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Blue/Deacon Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(blue.deacon, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Blue/Deacon Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(blue.deacon, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Blue/Deacon Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = blue.deacon)
+  summary(MOD)
+  hist(MOD$residuals)
+
+```
+
+Black Rockfish
+
+```{r}
+
+black<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Black Rockfish")
+
+ggplot(black, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Black Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(black, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Black Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(black, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Black Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = black)
+  summary(MOD)
+  hist(MOD$residuals)
+  
+```
+
+
+Vermilion Rockfish
+
+```{r}
+
+vermilion<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Vermilion Rockfish")
+
+ggplot(vermilion, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Vermilion Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(vermilion, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Vermilion Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(vermilion, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Vermilion Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = vermilion)
+  summary(MOD)
+  hist(MOD$residuals)
+  
+```
+
+
+
+Olive/Yellowtail Rockfish
+
+```{r}
+
+olive.yellowtail<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Olive/Yellowtail Rockfish")
+
+ggplot(olive.yellowtail, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Olive/Yellowtail Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(olive.yellowtail, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Olive/Yellowtail Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(olive.yellowtail, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Olive/Yellowtail Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = olive.yellowtail)
+  summary(MOD)
+  hist(MOD$residuals)
+  
+```
+
+Copper Rockfish
+
+```{r}
+
+copper<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Copper Rockfish")
+
+ggplot(copper, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Copper Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(copper, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Copper Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(copper, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Copper Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = copper)
+  summary(MOD)
+  hist(MOD$residuals)
+  
+```
+
+
+Canary Rockfish
+
+```{r}
+
+canary<-length.data%>%
+  group_by(Institution, Species, Data.Source)%>%
+  filter(Species == "Canary Rockfish")
+
+ggplot(canary, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Institution))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Canary Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(canary, aes(x=Fork.Length..cm., y=Total.Length..cm., col=Data.Source))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Canary Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+
+ggplot(canary, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
+  geom_point()+
+  geom_smooth(method = "lm")+ 
+  ggtitle("Canary Rockfish") +
+  xlab("Fork Length (cm)") + ylab("Total Length (cm)")
+  
+MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = canary)
+  summary(MOD)
+  hist(MOD$residuals)
+  
+```
+
+
