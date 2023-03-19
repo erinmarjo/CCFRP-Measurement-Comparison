@@ -15,7 +15,8 @@ library(plotrix) #To use standard error calculation
 library(cowplot) #For grouping plots
 library(scales) #For editing axis scales
 library(rstatix) #For running ANCOVA
-library(ggpmisc) #adding equation and r2 to figures
+#library(ggpmisc) #adding equation and r2 to figures
+library(here) ## for erin
 
 alpha=0.5
 formula<-y~x
@@ -27,7 +28,7 @@ Load Data
 
 ```{r}
 
-length.data <-read.csv('Fork-And-Total-Length-Data.csv')
+length.data <-read.csv(here("Data", 'Fork-And-Total-Length-Data.csv'))
 
 ```
 Blue/Deacon Rockfish
@@ -226,4 +227,55 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = canary)
   
 ```
 
+
+Same comparisons, but binned in 2 cm length bins
+
+
+```{r data}
+
+length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data2.csv"))
+str(length_dat)
+
+length_dat %>% arrange(desc(TL)) %>% slice(1)
+length_dat %>% arrange(desc(FL)) %>% slice(1)
+length_dat %>% arrange(TL) %>% slice(1)
+length_dat %>% arrange(FL) %>% slice(1)
+
+
+```
+
+```{r}
+
+bin_dat <- length_dat %>%
+  mutate(TL_bin = cut(TL, breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
+                                     32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,
+                                     62,64)),
+         FL_bin = cut(FL, breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
+                                     32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,
+                                     62,64)),
+         match = case_when(
+           TL_bin == FL_bin ~ "YES",
+           TL_bin != FL_bin ~ "NO"
+         ))
+
+bin_dat %>% count(match)
+
+bin_dat %>% filter(Species == "Blue/Deacon Rockfish") %>% count(match)
+
+bin_dat %>% filter(!Species == "Canary Rockfish") %>% count(match)
+
+ggplot(data = bin_dat)+
+  geom_bar(aes(x = TL_bin), fill = "Blue", alpha = 0.5)+
+  geom_bar(aes(x = FL_bin), fill = "Green", alpha = 0.5)
+
+```
+
+
+```{r}
+
+## the annoying long bin conversion
+
+
+
+```
 
