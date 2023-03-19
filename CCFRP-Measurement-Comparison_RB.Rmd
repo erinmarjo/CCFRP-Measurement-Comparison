@@ -33,7 +33,7 @@ length.data <-read.csv(here("Data", 'Fork-And-Total-Length-Data.csv'))
 ```
 Blue/Deacon Rockfish
 
-```{r}
+```{r blue deacon rf}
 
 blue.deacon<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -65,7 +65,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = blue.deacon)
 
 Black Rockfish
 
-```{r}
+```{r black rf}
 
 black<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -98,7 +98,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = black)
 
 Vermilion Rockfish
 
-```{r}
+```{r vermilion rf}
 
 vermilion<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -132,7 +132,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = vermilion)
 
 Olive/Yellowtail Rockfish
 
-```{r}
+```{r olive yellowtail rf}
 
 olive.yellowtail<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -164,7 +164,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = olive.yellowtail)
 
 Copper Rockfish
 
-```{r}
+```{r copper rf}
 
 copper<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -197,7 +197,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = copper)
 
 Canary Rockfish
 
-```{r}
+```{r canary rf}
 
 canary<-length.data%>%
   group_by(Institution, Species, Data.Source)%>%
@@ -231,7 +231,7 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = canary)
 Same comparisons, but binned in 2 cm length bins
 
 
-```{r data}
+```{r data part II}
 
 length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data2.csv"))
 str(length_dat)
@@ -244,7 +244,7 @@ length_dat %>% arrange(FL) %>% slice(1)
 
 ```
 
-```{r}
+```{r bin data categories}
 
 bin_dat <- length_dat %>%
   mutate(TL_bin = cut(TL, breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
@@ -258,24 +258,101 @@ bin_dat <- length_dat %>%
            TL_bin != FL_bin ~ "NO"
          ))
 
-bin_dat %>% count(match)
-
-bin_dat %>% filter(Species == "Blue/Deacon Rockfish") %>% count(match)
-
-bin_dat %>% filter(!Species == "Canary Rockfish") %>% count(match)
-
-ggplot(data = bin_dat)+
-  geom_bar(aes(x = TL_bin), fill = "Blue", alpha = 0.5)+
-  geom_bar(aes(x = FL_bin), fill = "Green", alpha = 0.5)
+## checking out some numbers
+# bin_dat %>% count(match)
+# bin_dat %>% filter(Species == "Blue/Deacon Rockfish") %>% count(match)
+# bin_dat %>% filter(!Species == "Canary Rockfish") %>% count(match)
+# 
+# ggplot(data = bin_dat)+
+#   geom_bar(aes(x = TL_bin), fill = "Blue", alpha = 0.5)+
+#   geom_bar(aes(x = FL_bin), fill = "Green", alpha = 0.5)
 
 ```
 
 
-```{r}
+```{r bin data integers}
 
 ## the annoying long bin conversion
 
+bin_dat_num <- bin_dat %>%
+  mutate(TL_int = case_when(
+    TL %in% c(11,12) ~ 12,
+    TL %in% c(13,14) ~ 14,
+    TL %in% c(15,16) ~ 16,
+    TL %in% c(17,18) ~ 18,
+    TL %in% c(19,20) ~ 20,
+    TL %in% c(21,22) ~ 22,
+    TL %in% c(23,24) ~ 24,
+    TL %in% c(25,26) ~ 26,
+    TL %in% c(27,28) ~ 28,
+    TL %in% c(29,30) ~ 30,
+    TL %in% c(31,32) ~ 32,
+    TL %in% c(33,34) ~ 34,
+    TL %in% c(35,36) ~ 36,
+    TL %in% c(37,38) ~ 38,
+    TL %in% c(39,40) ~ 40,
+    TL %in% c(41,42) ~ 42,
+    TL %in% c(43,44) ~ 44,
+    TL %in% c(45,46) ~ 46,
+    TL %in% c(47,48) ~ 48,
+    TL %in% c(49,50) ~ 50,
+    TL %in% c(51,52) ~ 52,
+    TL %in% c(53,54) ~ 54,
+    TL %in% c(55,56) ~ 56,
+    TL %in% c(57,58) ~ 58,
+    TL %in% c(59,60) ~ 60,
+    TL %in% c(61,62) ~ 62,
+    TL %in% c(63,64) ~ 64),
+    FL_int = case_when(
+      FL %in% c(11,12) ~ 12,
+      FL %in% c(13,14) ~ 14,
+      FL %in% c(15,16) ~ 16,
+      FL %in% c(17,18) ~ 18,
+      FL %in% c(19,20) ~ 20,
+      FL %in% c(21,22) ~ 22,
+      FL %in% c(23,24) ~ 24,
+      FL %in% c(25,26) ~ 26,
+      FL %in% c(27,28) ~ 28,
+      FL %in% c(29,30) ~ 30,
+      FL %in% c(31,32) ~ 32,
+      FL %in% c(33,34) ~ 34,
+      FL %in% c(35,36) ~ 36,
+      FL %in% c(37,38) ~ 38,
+      FL %in% c(39,40) ~ 40,
+      FL %in% c(41,42) ~ 42,
+      FL %in% c(43,44) ~ 44,
+      FL %in% c(45,46) ~ 46,
+      FL %in% c(47,48) ~ 48,
+      FL %in% c(49,50) ~ 50,
+      FL %in% c(51,52) ~ 52,
+      FL %in% c(53,54) ~ 54,
+      FL %in% c(55,56) ~ 56,
+      FL %in% c(57,58) ~ 58,
+      FL %in% c(59,60) ~ 60,
+      FL %in% c(61,62) ~ 62,
+      FL %in% c(63,64) ~ 64),
+    Diff_int = TL_int -FL_int)
 
+```
+
+
+```{r same analyses as RB}
+
+## Blue/Deacon rockfish
+
+BLU_DEA <- bin_dat_num %>%
+  filter(Species == "Blue/Deacon Rockfish")
+
+mod_BLU <- lm(FL_int ~ TL_int, data = BLU_DEA)
+summary(mod_BLU)
+
+## Black rockfish
+
+BLA <- bin_dat_num %>%
+  filter(Species == "Black Rockfish")
+
+mod_BLA <- lm(FL_int ~ TL_int, data = BLA)
+summary(mod_BLA)
 
 ```
 
