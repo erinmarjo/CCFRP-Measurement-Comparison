@@ -157,7 +157,9 @@ ggplot(olive.yellowtail, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
   xlab("Fork Length (cm)") + ylab("Total Length (cm)")
   
 MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = olive.yellowtail)
+#MOD2 <- lm(Total.Length..cm.~Fork.Length..cm., data = olive.yellowtail)
   summary(MOD)
+  #summary(MOD2)
   hist(MOD$residuals)
   
 ```
@@ -343,7 +345,7 @@ bin_dat_num <- bin_dat %>%
 BLU_DEA <- bin_dat_num %>%
   filter(Species == "Blue/Deacon Rockfish")
 
-mod_BLU <- lm(FL_int ~ TL_int, data = BLU_DEA)
+mod_BLU <- lm(TL_int ~ FL_int, data = BLU_DEA)
 summary(mod_BLU)
 
 ## Black rockfish
@@ -351,8 +353,59 @@ summary(mod_BLU)
 BLA <- bin_dat_num %>%
   filter(Species == "Black Rockfish")
 
-mod_BLA <- lm(FL_int ~ TL_int, data = BLA)
+mod_BLA <- lm(TL_int ~ FL_int, data = BLA)
 summary(mod_BLA)
+
+## Vermilion rockfish
+
+VER <- bin_dat_num %>%
+  filter(Species == "Vermilion Rockfish")
+
+mod_VER <- lm(TL_int ~ FL_int, data = VER)
+summary(mod_VER)
+
+## Olive/Yellowtail rockfish
+
+OYT <- bin_dat_num %>%
+  filter(Species == "Olive/Yellowtail Rockfish")
+
+mod_OYT <- lm(TL ~ FL, data = OYT)
+summary(mod_OYT)
+
+## Copper rockfish
+
+CPR <- bin_dat_num %>%
+  filter(Species == "Copper Rockfish")
+
+mod_CPR <- lm(TL_int ~ FL_int, data = CPR)
+summary(mod_CPR)
+
+## Canary rockfish
+
+CNY <- bin_dat_num %>%
+  filter(Species == "Canary Rockfish")
+
+mod_CNY <- lm(TL_int ~ FL_int, data = CNY)
+summary(mod_CNY)
+
+
+```
+
+
+
+```{r theoretical data}
+
+dummy_dat <- data.frame(FL = seq(11,63, by = 1))
+
+dummy_dat_bin <- dummy_dat %>%
+  mutate(TL_blu = 1.00265*FL + 0.79841,
+         TL_bla = 0.9573*FL + 2.1143,
+         TL_ver = 1.02015*FL + 0.12161,
+         TL_oyt = 0.99923*FL + 0.67290,
+         TL_cpr = 1*FL + 0,
+         TL_cny = 1.057358*FL - 0.17298)
+
+dummy_dat_rb
 
 ```
 
