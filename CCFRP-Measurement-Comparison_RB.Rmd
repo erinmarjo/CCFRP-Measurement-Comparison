@@ -369,7 +369,7 @@ summary(mod_VER)
 OYT <- bin_dat_num %>%
   filter(Species == "Olive/Yellowtail Rockfish")
 
-mod_OYT <- lm(TL ~ FL, data = OYT)
+mod_OYT <- lm(TL_int ~ FL_int, data = OYT)
 summary(mod_OYT)
 
 ## Copper rockfish
@@ -397,6 +397,14 @@ summary(mod_CNY)
 
 dummy_dat <- data.frame(FL = seq(11,63, by = 1))
 
+dummy_dat_rb <- dummy_dat %>%
+  mutate(TL_blu = 1.014627*FL + 0.498233,
+         TL_bla = 0.99965*FL + 0.76415,
+         TL_ver = 1.040120*FL - 0.590558,
+         TL_oyt = 1.02651*FL - 0.19673,
+         TL_cpr = 1*FL + 0,
+         TL_cny = 1.060643*FL - 0.276485)
+
 dummy_dat_bin <- dummy_dat %>%
   mutate(TL_blu = 1.00265*FL + 0.79841,
          TL_bla = 0.9573*FL + 2.1143,
@@ -404,8 +412,6 @@ dummy_dat_bin <- dummy_dat %>%
          TL_oyt = 0.99923*FL + 0.67290,
          TL_cpr = 1*FL + 0,
          TL_cny = 1.057358*FL - 0.17298)
-
-dummy_dat_rb
 
 ```
 
