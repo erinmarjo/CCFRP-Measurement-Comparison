@@ -1,8 +1,11 @@
 ---
 title: "CCFRP Central California Fork Length and Total Length Comparison"
 author: "Rachel Brooks"
-date: "2023-03-17"
-output: pdf_document
+date: '2023-03-17'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -229,15 +232,21 @@ MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = canary)
   
 ```
 
+## Binning Addition
+### E. Johnston 2023-03-19
 
-Same comparisons, but binned in 2 cm length bins
+Same comparisons, but binned in 2 cm length bins, similar to what M. Monk says happens for stock assessment purposes.
 
 
 ```{r data part II}
 
 length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data2.csv"))
-str(length_dat)
 
+```
+
+
+```{r data checks, echo = F, eval = F}
+str(length_dat)
 length_dat %>% arrange(desc(TL)) %>% slice(1)
 length_dat %>% arrange(desc(FL)) %>% slice(1)
 length_dat %>% arrange(TL) %>% slice(1)
@@ -247,7 +256,6 @@ length_dat %>% arrange(FL) %>% slice(1)
 ```
 
 ```{r bin data categories}
-
 bin_dat <- length_dat %>%
   mutate(TL_bin = cut(TL, breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
                                      32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,
@@ -259,7 +267,10 @@ bin_dat <- length_dat %>%
            TL_bin == FL_bin ~ "YES",
            TL_bin != FL_bin ~ "NO"
          ))
+```
 
+
+```{r bin data categories check, echo = F, eval = F}
 ## checking out some numbers
 # bin_dat %>% count(match)
 # bin_dat %>% filter(Species == "Blue/Deacon Rockfish") %>% count(match)
@@ -392,6 +403,7 @@ summary(mod_CNY)
 ```
 
 
+#### Theoretical Datasets
 
 ```{r theoretical data}
 
@@ -412,6 +424,27 @@ dummy_dat_bin <- dummy_dat %>%
          TL_oyt = 0.99923*FL + 0.67290,
          TL_cpr = 1*FL + 0,
          TL_cny = 1.057358*FL - 0.17298)
+
+# write_csv(dummy_dat_rb, path = here("Data", "dummy_dat_OG.csv"))
+# write_csv(dummy_dat_bin, path = here("Data", "dummy_dat_bin.csv"))
+
+
+```
+
+
+This table has FL 11-63 cm (the actual size ranges in our data) and the theoretical TL calculated based on linear regression output for real size measurements rounded to nearest whole cm, as is procedure for CCFRP.
+
+```{r dummy dat rb}
+
+dummy_dat_rb
+
+```
+
+
+This table has FL 11-63 cm and the theoretical TL calculated based on linear regression output for 2cm size bins, as they do for stock assessment purposes.
+
+```{r dummy dat bin}
+dummy_dat_bin
 
 ```
 
