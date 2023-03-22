@@ -60,7 +60,7 @@ ggplot(blue.deacon, aes(x=Fork.Length..cm., y=Total.Length..cm.))+
   ggtitle("Blue/Deacon Rockfish") +
   xlab("Fork Length (cm)") + ylab("Total Length (cm)")
   
-MOD <- lm(Fork.Length..cm.~Total.Length..cm., data = blue.deacon)
+MOD <- lm(Total.Length..cm.~Fork.Length..cm., data = blue.deacon)
   summary(MOD)
   hist(MOD$residuals)
 
@@ -240,7 +240,7 @@ Same comparisons, but binned in 2 cm length bins, similar to what M. Monk says h
 
 ```{r data part II}
 
-length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data2.csv"))
+length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data3.csv"))
 
 ```
 
@@ -402,6 +402,58 @@ summary(mod_CNY)
 
 ```
 
+```{r same analyses as RB}
+
+## Blue/Deacon rockfish
+
+
+mod_BLU2 <- lm(TL ~ FL, data = BLU_DEA)
+summary(mod_BLU2)
+
+## Black rockfish
+
+
+mod_BLA2 <- lm(TL ~ FL, data = BLA)
+summary(mod_BLA2)
+
+## Vermilion rockfish
+
+mod_VER2 <- lm(TL ~ FL, data = VER)
+summary(mod_VER2)
+
+mod_VER3 <- lm(TL ~ FL*Institution, data = VER)
+summary(mod_VER3)
+
+## Olive/Yellowtail rockfish
+
+mod_OYT2 <- lm(TL ~ FL, data = OYT)
+summary(mod_OYT2)
+
+## Copper rockfish
+
+mod_CPR2 <- lm(TL ~ FL, data = CPR)
+summary(mod_CPR2)
+
+## Canary rockfish
+
+mod_CNY2 <- lm(TL ~ FL, data = CNY)
+summary(mod_CNY2)
+
+
+```
+
+
+```{r}
+
+summary(mod_BLU)
+summary(mod_BLA)
+summary(mod_VER)
+summary(mod_OYT)
+summary(mod_CPR)
+summary(mod_CNY)
+
+```
+
 
 #### Theoretical Datasets
 
@@ -410,23 +462,23 @@ summary(mod_CNY)
 dummy_dat <- data.frame(FL = seq(11,63, by = 1))
 
 dummy_dat_rb <- dummy_dat %>%
-  mutate(TL_blu = 1.014627*FL + 0.498233,
-         TL_bla = 0.99965*FL + 0.76415,
-         TL_ver = 1.040120*FL - 0.590558,
-         TL_oyt = 1.02651*FL - 0.19673,
-         TL_cpr = 1*FL + 0,
-         TL_cny = 1.060643*FL - 0.276485)
+  mutate(TL_blu = 1.011954*FL + 0.585388,
+         TL_bla = 1.00491*FL + 0.59292 ,
+         TL_ver = 1.037405*FL - 0.560013,
+         TL_oyt = 1.0255*FL - 0.1654,
+         TL_cpr = 1*FL + 6.355e-15,
+         TL_cny = 1.062201*FL - 0.359872)
 
 dummy_dat_bin <- dummy_dat %>%
-  mutate(TL_blu = 1.00265*FL + 0.79841,
-         TL_bla = 0.9573*FL + 2.1143,
-         TL_ver = 1.02015*FL + 0.12161,
-         TL_oyt = 0.99923*FL + 0.67290,
-         TL_cpr = 1*FL + 0,
-         TL_cny = 1.057358*FL - 0.17298)
+  mutate(TL_blu = 0.99990*FL + 0.89237,
+         TL_bla = 0.96440*FL + 1.89602,
+         TL_ver = 1.01327*FL + 0.33149,
+         TL_oyt = 0.99371*FL + 0.84570,
+         TL_cpr = 1*FL - 6.355e-15,
+         TL_cny = 1.059007*FL - 0.262025)
 
-# write_csv(dummy_dat_rb, path = here("Data", "dummy_dat_OG.csv"))
-# write_csv(dummy_dat_bin, path = here("Data", "dummy_dat_bin.csv"))
+ #write_csv(dummy_dat_rb, path = here("Data", "dummy_dat_OG.csv"))
+ #write_csv(dummy_dat_bin, path = here("Data", "dummy_dat_bin.csv"))
 
 
 ```
@@ -445,6 +497,71 @@ This table has FL 11-63 cm and the theoretical TL calculated based on linear reg
 
 ```{r dummy dat bin}
 dummy_dat_bin
+
+```
+
+
+```{r}
+
+oyt_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_oyt), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_oyt), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Olive/Yellowtail Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+blu_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_blu), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_blu), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Blue/Deacon Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+bla_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_bla), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_bla), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Black Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+ver_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_ver), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_ver), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Vermilion Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+cpr_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_cpr), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_cpr), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Copper Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+cny_plot <- ggplot() +
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_cny), color = "red", size = 0.71)+
+  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_cny), color = "blue", size = 0.71)+
+  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Canary Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+
+
+
+ggsave("oyt_plot.png", plot = oyt_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("blu_plot.png", plot = blu_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("bla_plot.png", plot = bla_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("ver_plot.png", plot = ver_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("cpr_plot.png", plot = cpr_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("cny_plot.png", plot = cny_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+
+
 
 ```
 
