@@ -32,6 +32,8 @@ Load Data
 ```{r}
 
 length.data <-read.csv(here("Data", 'Fork-And-Total-Length-Data.csv'))
+length.data.resolved <-read.csv(here("Data", 'Fork-And-Total-Length-Data-Resolved.csv'))
+
 
 ```
 Blue/Deacon Rockfish
@@ -241,6 +243,7 @@ Same comparisons, but binned in 2 cm length bins, similar to what M. Monk says h
 ```{r data part II}
 
 length_dat <- read_csv(here("Data", "Fork-And-Total-Length-Data3.csv"))
+len_dat_resolved <- read_csv(here("Data", "Fork-And-Total-Length-Data-Resolved.csv"))
 
 ```
 
@@ -256,7 +259,7 @@ length_dat %>% arrange(FL) %>% slice(1)
 ```
 
 ```{r bin data categories}
-bin_dat <- length_dat %>%
+bin_dat <- len_dat_resolved %>%
   mutate(TL_bin = cut(TL, breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
                                      32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,
                                      62,64)),
@@ -429,6 +432,15 @@ summary(mod_VER3)
 mod_OYT2 <- lm(TL ~ FL, data = OYT)
 summary(mod_OYT2)
 
+OLV <- bin_dat_num %>%
+  filter(Species == "Olive Rockfish")
+
+YTL <- bin_dat_num %>%
+  filter(Species == "Yellowtail Rockfish")
+
+mod_OLV2 <- lm(TL ~ FL, data = OLV)
+mod_YTL2 <- lm(TL ~ FL, data = YTL)
+
 ## Copper rockfish
 
 mod_CPR2 <- lm(TL ~ FL, data = CPR)
@@ -439,18 +451,62 @@ summary(mod_CPR2)
 mod_CNY2 <- lm(TL ~ FL, data = CNY)
 summary(mod_CNY2)
 
+## Gopher rockfish
+
+GPR <- bin_dat_num %>%
+  filter(Species == "Gopher Rockfish")
+
+mod_GPR2 <- lm(TL ~ FL, data = GPR)
+
+## China rockfish
+
+CHN <- bin_dat_num %>%
+  filter(Species == "China Rockfish")
+
+mod_CHN2 <- lm(TL ~ FL, data = CHN)
+
+## Brown rockfish
+
+BWN <- bin_dat_num %>%
+  filter(Species == "Brown Rockfish")
+
+mod_BWN2 <- lm(TL ~ FL, data = BWN)
+
+
+## Rosy rockfish
+
+RSY <- bin_dat_num %>%
+  filter(Species == "Rosy Rockfish")
+
+mod_RSY2 <- lm(TL ~ FL, data = RSY)
+
+## Kelp rockfish
+
+KLP <- bin_dat_num %>%
+  filter(Species == "Kelp Rockfish")
+
+mod_KLP2 <- lm(TL ~ FL, data = KLP)
+
 
 ```
 
 
 ```{r}
 
-summary(mod_BLU)
-summary(mod_BLA)
-summary(mod_VER)
-summary(mod_OYT)
-summary(mod_CPR)
-summary(mod_CNY)
+summary(mod_BLU2)
+summary(mod_BLA2)
+summary(mod_VER2)
+summary(mod_OYT2)## didn't change
+summary(mod_CPR2)
+summary(mod_CNY2)
+summary(mod_OLV2)
+summary(mod_YTL2)
+summary(mod_BWN2)
+summary(mod_CHN2)
+summary(mod_GPR2)
+summary(mod_KLP2)
+summary(mod_RSY2)
+
 
 ```
 
@@ -461,21 +517,66 @@ summary(mod_CNY)
 
 dummy_dat <- data.frame(FL = seq(11,63, by = 1))
 
-dummy_dat_rb <- dummy_dat %>%
-  mutate(TL_blu = 1.011954*FL + 0.585388,
-         TL_bla = 1.00491*FL + 0.59292 ,
-         TL_ver = 1.037405*FL - 0.560013,
-         TL_oyt = 1.0255*FL - 0.1654,
-         TL_cpr = 1*FL + 6.355e-15,
-         TL_cny = 1.062201*FL - 0.359872)
+## resolved equations
+dummy_dat_calc <- dummy_dat %>%
+  mutate(FL_mm = FL*10,
+         TL_blu = 1.015561*FL + 0.488725,
+         TL_bla = 1.01102*FL + 0.39437,
+         TL_ver = 1.035447*FL - 0.450808,
+         TL_olv = 1.03130*FL - 0.32448,
+         TL_ytl = 1.02523*FL - 0.10160,
+         TL_cpr = 1*FL - 5.802e-15,
+         TL_cny = 1.049452*FL - 0.052804,
+         TL_bwn = 0.984619*FL + 0.595875,
+         TL_chn = 1*FL + 0,
+         TL_gpr = 1.000258*FL + 0.002467,
+         TL_klp = 1*FL + 0,
+         TL_rsy = 0.97721*FL + 0.71181,
+         e_TL_blu = 1.039*FL_mm + 2.495,
+         e_TL_bla = 1.017*FL_mm + 1.595,
+         e_TL_ver = 1.054*FL_mm - 7.857,
+         e_TL_olv = 1.029*FL_mm + 1.419,
+         e_TL_ytl = 1.025*FL_mm + 2.358,
+         e_TL_cpr = 1.010*FL_mm + 0.629,
+         e_TL_cny = 1.070*FL_mm - 4.107,
+         e_TL_bwn = 1.007*FL_mm - 0.586,
+         e_TL_chn = 1.001*FL_mm + 0.854,
+         e_TL_gpr = 1.005*FL_mm - 0.759,
+         #e_TL_klp = 1.070*FL_mm - 4.107, ## no kelp rockfish in echeverria
+         e_TL_rsy = 1.015*FL_mm + 1.409,
+         TL_blu = TL_blu*10,
+         TL_bla = TL_bla*10,
+         TL_ver = TL_ver*10,
+         TL_olv = TL_olv*10,
+         TL_ytl = TL_ytl*10,
+         TL_cpr = TL_cpr*10,
+         TL_cny = TL_cny*10,
+         TL_bwn = TL_bwn*10,
+         TL_chn = TL_chn*10,
+         TL_gpr = TL_gpr*10,
+         TL_klp = TL_klp*10,
+         TL_rsy = TL_rsy*10)
 
-dummy_dat_bin <- dummy_dat %>%
-  mutate(TL_blu = 0.99990*FL + 0.89237,
-         TL_bla = 0.96440*FL + 1.89602,
-         TL_ver = 1.01327*FL + 0.33149,
-         TL_oyt = 0.99371*FL + 0.84570,
-         TL_cpr = 1*FL - 6.355e-15,
-         TL_cny = 1.059007*FL - 0.262025)
+
+
+## old not resolved equations
+# dummy_dat_rb <- dummy_dat %>%
+#   mutate(TL_blu = 1.011954*FL + 0.585388,
+#          TL_bla = 1.00491*FL + 0.59292 ,
+#          TL_ver = 1.037405*FL - 0.560013,
+#          TL_oyt = 1.0255*FL - 0.1654,
+#          TL_cpr = 1*FL + 6.355e-15,
+#          TL_cny = 1.062201*FL - 0.359872)
+
+## not going to bin anymore
+
+# dummy_dat_bin <- dummy_dat %>%
+#   mutate(TL_blu = 0.99990*FL + 0.89237,
+#          TL_bla = 0.96440*FL + 1.89602,
+#          TL_ver = 1.01327*FL + 0.33149,
+#          TL_oyt = 0.99371*FL + 0.84570,
+#          TL_cpr = 1*FL - 6.355e-15,
+#          TL_cny = 1.059007*FL - 0.262025)
 
  #write_csv(dummy_dat_rb, path = here("Data", "dummy_dat_OG.csv"))
  #write_csv(dummy_dat_bin, path = here("Data", "dummy_dat_bin.csv"))
@@ -486,7 +587,7 @@ dummy_dat_bin <- dummy_dat %>%
 
 This table has FL 11-63 cm (the actual size ranges in our data) and the theoretical TL calculated based on linear regression output for real size measurements rounded to nearest whole cm, as is procedure for CCFRP.
 
-```{r dummy dat rb}
+```{r dummy dat rb, eval = F, echo = F}
 
 dummy_dat_rb
 
@@ -495,7 +596,7 @@ dummy_dat_rb
 
 This table has FL 11-63 cm and the theoretical TL calculated based on linear regression output for 2cm size bins, as they do for stock assessment purposes.
 
-```{r dummy dat bin}
+```{r dummy dat bin, eval = F, echo = F}
 dummy_dat_bin
 
 ```
@@ -503,63 +604,127 @@ dummy_dat_bin
 
 ```{r}
 
-oyt_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_oyt), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_oyt), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Olive/Yellowtail Rockfish")+
-  theme(axis.title.x = element_text(size = 18),
-        axis.title.y = element_text(size = 18))
+## not combining olv and ytl anymore as per RS suggestions
+
+# oyt_plot <- ggplot() +
+#   geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
+#   geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_oyt), color = "red", size = 0.71)+
+#   geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_oyt), color = "blue", size = 0.71)+
+#   labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Olive/Yellowtail Rockfish")+
+#   theme(axis.title.x = element_text(size = 18),
+#         axis.title.y = element_text(size = 18))
 
 blu_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_blu), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_blu), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Blue/Deacon Rockfish")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_blu), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_blu), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Blue/Deacon Rockfish")+
   theme(axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18))
 
 bla_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_bla), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_bla), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Black Rockfish")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_bla), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_bla), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Black Rockfish")+
   theme(axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18))
 
 ver_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_ver), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_ver), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Vermilion Rockfish")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_ver), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_ver), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Vermilion Rockfish")+
   theme(axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18))
 
 cpr_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_cpr), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_cpr), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Copper Rockfish")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_cpr), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_cpr), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Copper Rockfish")+
   theme(axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18))
 
 cny_plot <- ggplot() +
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = FL), linetype = "dashed")+
-  geom_line(data = dummy_dat_rb, aes(x = FL, y = TL_cny), color = "red", size = 0.71)+
-  geom_line(data = dummy_dat_bin, aes(x = FL, y = TL_cny), color = "blue", size = 0.71)+
-  labs(x = "\nFork Length (cm)", y = "Total Length (cm)\n", title = "Canary Rockfish")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_cny), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_cny), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Canary Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+olv_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_olv), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_olv), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Olive Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+ytl_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_ytl), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_ytl), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Yellowtail Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+bwn_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_bwn), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_bwn), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Brown Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+chn_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_chn), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_chn), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "China Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+gpr_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_gpr), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_gpr), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Gopher Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+klp_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_klp), color = "blue", size = 0.71)+
+  #geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_klp), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Kelp Rockfish")+
+  theme(axis.title.x = element_text(size = 18),
+        axis.title.y = element_text(size = 18))
+
+rsy_plot <- ggplot() +
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = FL_mm), linetype = "dashed")+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = TL_rsy), color = "blue", size = 0.71)+
+  geom_line(data = dummy_dat_calc, aes(x = FL_mm, y = e_TL_rsy), color = "red", size = 0.71)+
+  labs(x = "\nFork Length (mm)", y = "Total Length (mm)\n", title = "Rosy Rockfish")+
   theme(axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18))
 
 
 
 
-ggsave("oyt_plot.png", plot = oyt_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
-ggsave("blu_plot.png", plot = blu_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
-ggsave("bla_plot.png", plot = bla_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
-ggsave("ver_plot.png", plot = ver_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
-ggsave("cpr_plot.png", plot = cpr_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
-ggsave("cny_plot.png", plot = cny_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("olv_plot_resolved_echeverria.png", plot = olv_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("ytl_plot_resolved_echeverria.png", plot = ytl_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("blu_plot_resolved_echeverria.png", plot = blu_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("bla_plot_resolved_echeverria.png", plot = bla_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("ver_plot_resolved_echeverria.png", plot = ver_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("cpr_plot_resolved_echeverria.png", plot = cpr_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("cny_plot_resolved_echeverria.png", plot = cny_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("bwn_plot_resolved_echeverria.png", plot = bwn_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("chn_plot_resolved_echeverria.png", plot = chn_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("gpr_plot_resolved_echeverria.png", plot = gpr_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("klp_plot_resolved_echeverria.png", plot = klp_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
+ggsave("rsy_plot_resolved_echeverria.png", plot = rsy_plot, dpi = 1000, height = 5, width = 7, path = here("Output"))
 
 
 
